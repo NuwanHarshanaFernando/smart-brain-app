@@ -1,10 +1,19 @@
 import React, { Component } from 'react';
 import Particles from 'react-particles-js';
+import Clarifai from 'clarifai';
+import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Navigation from './components/Navigation/Navigation';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import './App.css';
+
+
+// initialize with your api key. This will also work in your browser via http://browserify.org/
+
+const app = new Clarifai.App({
+  apiKey: '2682ebf37e594c6cb330fd708e8ca695'
+ });
 
 const particlesOptions = {
   
@@ -22,6 +31,39 @@ const particlesOptions = {
 }
 
 class App extends Component {
+  constructor(){
+    super();
+    this.state = {
+      input: '',
+      imageUrl: ''
+    }
+  }
+
+  onInputChange = (event) => {
+    //console.log(event.target.value);
+    this.setState({input: event.target.value})
+  }
+
+  onButtonSubmit = () => {
+    //console.log('click');
+
+    this.setState({imageUrl: this.state.input})
+    app.models
+    .predict(
+     // "a403429f2ddf4b49b307e318f00e528b", 
+      Clarifai.COLOR_MODEL,
+      this.state.input)
+    .then(
+    function(response) {
+      console.log(response);
+    },
+    function(err) {
+      // there was an error
+    }
+  );
+
+  }
+
   render(){
     return (
       <div className="App">
@@ -31,8 +73,11 @@ class App extends Component {
         <Navigation />
         <Logo />
         <Rank />
-        <ImageLinkForm />
-         {/* <FaceRecognition /> */}
+        <ImageLinkForm 
+          onInputChange = {this.onInputChange} 
+          onButtonSubmit = {this.onButtonSubmit}
+       />
+          <FaceRecognition imageUrl={this.state.imageUrl}/> 
       </div>
     );
   }
@@ -41,8 +86,6 @@ class App extends Component {
 
 export default App;
 
-//Install tachyons, react-particles, react-tilt 
-//npm install tachyons
-//npm install --save react-tilt
-//npm install react-particles-js
 
+//Install api Clarifai
+//npm install clarifai
