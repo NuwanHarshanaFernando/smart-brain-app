@@ -51,11 +51,11 @@ class App extends Component {
     app.models
     .predict(
      // "a403429f2ddf4b49b307e318f00e528b", 
-      Clarifai.COLOR_MODEL,
+      Clarifai.FACE_DETECT_MODEL,
       this.state.input)
     .then(
     function(response) {
-      console.log(response);
+      console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
     },
     function(err) {
       // there was an error
@@ -85,7 +85,3 @@ class App extends Component {
 }
 
 export default App;
-
-
-//Install api Clarifai
-//npm install clarifai
